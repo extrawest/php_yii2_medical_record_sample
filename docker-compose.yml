@@ -1,0 +1,46 @@
+version: '2'
+services:
+    cli:
+        build: docker/cli
+        tty: true
+        volumes:
+            - .:/app
+        links:
+            - db
+        environment:
+            TZ: Europe/Kiev
+    db:
+        image: mysql:5.7
+        volumes:
+            - ./docker/db:/docker-entrypoint-initdb.d/
+        ports:
+            - "3309:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: medical
+            MYSQL_DATABASE2: medical_test
+            MYSQL_USER: med
+            MYSQL_PASSWORD: med
+            TZ: Europe/Kiev
+    fpm:
+        build: docker/fpm
+        expose:
+            - "9000"
+        volumes_from:
+            - cli
+        links:
+            - db
+        environment:
+            TZ: Europe/Kiev
+    nginx:
+        build: docker/nginx
+        ports:
+            - "8081:8081"
+            - "8082:8082"
+            - "8083:8083"
+        volumes_from:
+            - cli
+        links:
+            - fpm
+        environment:
+            TZ: Europe/Kiev

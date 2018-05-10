@@ -1,0 +1,7 @@
+.idea
+Thumbs.db
+/vendor
+composer.phar
+phpunit.phar
+/phpunit.xml
+.env
